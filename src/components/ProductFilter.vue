@@ -66,10 +66,11 @@
         </ul>
       </fieldset>
 
+      <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" name="circular" v-if="loader === true"></loader>
       <button class="filter__submit button button--primery" type="submit">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button">
+      <button class="filter__reset button button--second" type="button" @click.prevent="reset">
         Сбросить
       </button>
     </form>
@@ -95,6 +96,7 @@ export default {
       colorsData: [],
       materialsData: [],
       seasonsData: [],
+      loader: false,
     }
   },
   computed: {
@@ -127,12 +129,17 @@ export default {
   },
   methods: {
     submit() {
-      this.$emit('update:priceFrom', this.currentPriceFrom);
-      this.$emit('update:priceTo', this.currentPriceTo);
-      this.$emit('update:categoryId', this.currentCategoryId);
-      this.$emit('update:colorId', this.colorCategory);
-      this.$emit('update:seasonsId', this.seasonsCategory);
-      this.$emit('update:materialsId', this.materialsCategory);
+      this.loader = true;
+      clearTimeout(this.loading);
+      this.loading = setTimeout(() => {
+        this.$emit('update:priceFrom', this.currentPriceFrom);
+        this.$emit('update:priceTo', this.currentPriceTo);
+        this.$emit('update:categoryId', this.currentCategoryId);
+        this.$emit('update:colorId', this.colorCategory);
+        this.$emit('update:seasonsId', this.seasonsCategory);
+        this.$emit('update:materialsId', this.materialsCategory);
+        this.loader = false;
+      }, 1000)
     },
     reset() {
       this.$emit('update:priceFrom', 0);

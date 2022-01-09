@@ -91,6 +91,7 @@
           <ul class="cart__orders">
             <OrderItem v-for="product in products" :key="product.id" :product="product"/>
           </ul>
+        <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" name="circular" v-if="loader === true"></loader>
 
           <div class="cart__total">
             <p>Доставка: <b v-if="deliveryTypeId === 1">бесплатно</b><b v-if="deliveryTypeId === 2">Курьером (1200 руб)</b></p>
@@ -135,7 +136,8 @@ export default {
       nameValid: false,
       addressValid: false,
       phoneValid: false,
-      emailValid: false
+      emailValid: false,
+      loader: false,
     }
   },
   components: {
@@ -176,36 +178,41 @@ export default {
     },
     ...mapActions(['createOrder']),
     checkForm() {
-      if (this.nameValid === false && this.addressValid === false && this.phoneValid === false && this.emailValid === false) {
-        this.createOrder({
-          name: this.name,
-          address: this.address,
-          phone: this.phone,
-          email: this.email,
-          deliveryTypeId: this.deliveryTypeId,
-          paymentTypeId: this.paymentTypeId,
-          comment: this.comment,
-        })
-      }
-      this.nameValid = false;
-      this.addressValid = false;
-      this.phoneValid = false;
-      this.emailValid = false;
-      if (this.name.length < 3) {
-        this.nameValid = true;
-      }
+      this.loader = true;
+      clearTimeout(this.loading);
+      this.loading = setTimeout(() => {
+        if (this.nameValid === false && this.addressValid === false && this.phoneValid === false && this.emailValid === false) {
+          this.createOrder({
+            name: this.name,
+            address: this.address,
+            phone: this.phone,
+            email: this.email,
+            deliveryTypeId: this.deliveryTypeId,
+            paymentTypeId: this.paymentTypeId,
+            comment: this.comment,
+          })
+        }
+        this.nameValid = false;
+        this.addressValid = false;
+        this.phoneValid = false;
+        this.emailValid = false;
+        if (this.name.length < 3) {
+          this.nameValid = true;
+        }
 
-      if (this.address.length < 7) {
-        this.addressValid = true;
-      }
+        if (this.address.length < 7) {
+          this.addressValid = true;
+        }
 
-      if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(this.phone) || this.phone.length < 12) {
-        this.phoneValid = true;
-      }
+        if (!/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(this.phone) || this.phone.length < 12) {
+          this.phoneValid = true;
+        }
 
-      if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(this.email)) {
-        this.emailValid = true;
-      }
+        if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(this.email)) {
+          this.emailValid = true;
+        }
+        this.loader = false;
+      }, 1000)
 
 
     }

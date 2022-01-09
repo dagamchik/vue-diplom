@@ -89,6 +89,8 @@
               </fieldset>
             </div>
 
+            <loader object="#ff9633" color1="#ffffff" color2="#17fd3d" size="5" speed="2" bg="#343a40" objectbg="#999793" opacity="80" name="circular" v-if="loader === true"></loader>
+
             <button class="item__button button button--primery" type="submit">
               В корзину
             </button>
@@ -131,11 +133,14 @@
         </div>
       </div>
     </section>
+
+    <ModalWindow ref="modal"></ModalWindow>
   </main>
 </template>
 
 <script>
 import ProductRadioButtons from '@/components/ProductRadioButtons.vue';
+import ModalWindow from '@/components/ModalWindow.vue';
 import noPhoto from '@/assets/noPhoto.jpg';
 import numberFormat from '@/helpers/numberFormat';
 import axios from 'axios';
@@ -152,10 +157,12 @@ export default {
       currentImage: null,
       noPhoto,
       quantity: 1,
+      loader: false,
+      modalError: false,
     }
   },
   components: {
-    ProductRadioButtons,
+    ProductRadioButtons, ModalWindow
   },
   filters: {
     numberFormat,
@@ -184,6 +191,11 @@ export default {
       this.$emit('update:currentImage', value);
     },
     addToCart() {
+      this.loader = true;
+      clearTimeout(this.loading);
+      this.loading = (setTimeout(() => {
+        this.loader = false;
+      }, 1000))
       if (this.currentSizeId > 0) {
         this.addProductToCart({
           productId: this.product.id,
@@ -191,6 +203,10 @@ export default {
           sizeId: this.currentSizeId,
           quantity: this.quantity,
         })
+      } else if (this.currentSizeId < 1){
+        setTimeout(() => {
+          this.$refs.modal.show = true;
+        }, 1000)
       }
     },
     addCount() {
@@ -248,3 +264,6 @@ export default {
   }
 }
 </script>
+
+<style lang="css">
+</style>
