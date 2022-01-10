@@ -24,7 +24,7 @@ export default new Vuex.Store({
     },
     updateCartProductQuantity(state, { basketItemId, quantity }) {
       const item = state.cartProductsData.find((item) => item.id === basketItemId);
-
+      console.log(basketItemId)
       if (item) {
         item.quantity = quantity;
       }

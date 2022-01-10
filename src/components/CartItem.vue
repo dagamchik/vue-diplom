@@ -28,7 +28,7 @@
         </svg>
       </button>
 
-      <input type="text" :value="item.quantity" name="count">
+      <input type="text" :value="item.quantity" name="count" @input="changeQuantity({$event, item})">
 
       <button type="button" aria-label="Добавить один товар" @click.prevent="addCount(item)">
         <svg width="10" height="10" fill="currentColor">
@@ -38,7 +38,7 @@
     </div>
 
     <b class="product__price">
-      {{item.product.price | numberFormat}} ₽
+      {{item.product.price * item.quantity | numberFormat}} ₽
     </b>
 
     <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины" @click.prevent="deleteProduct(item)">
@@ -52,6 +52,11 @@
 <script>
 import numberFormat from '@/helpers/numberFormat';
 export default {
+  data() {
+    return {
+
+    }
+  },
   props: {
     item: Object,
   },
@@ -78,6 +83,14 @@ export default {
     deleteProduct(item) {
       this.$store.dispatch('deleteProductFromCart', {
         basketItemId: item.id
+      })
+    },
+    changeQuantity({$event, item}) {
+      let newQuantity = $event.target.value;
+      console.log(item.id)
+      this.$store.dispatch('updateCartProductQuantity', {
+        basketItemId: item.id,
+        quantity: Number(newQuantity),
       })
     }
   }
